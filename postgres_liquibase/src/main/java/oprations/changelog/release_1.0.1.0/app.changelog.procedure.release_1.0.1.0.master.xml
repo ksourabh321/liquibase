@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+		
+	
+	<changeSet  author="ksourabh321"  id="create_emp_upd_proc:1.0.1.0" context="LOCAL">
+        <createProcedure>
+		<![CDATA[
+		    CREATE OR REPLACE PROCEDURE app.emp_upd_proc(
+			IN p_emp_id bigint,
+			IN p_new_emp_role character varying)
+			LANGUAGE 'plpgsql'
+			AS $BODY$
+			DECLARE
+			BEGIN
+
+				Update app.emp_vw set emp_role=p_new_emp_role where emp_id=p_emp_id;
+				Commit;
+
+			END;
+			$BODY$;
+			ALTER PROCEDURE app.emp_upd_proc(bigint, character varying)
+			OWNER TO postgres;		
+		]]>
+		</createProcedure>
+    </changeSet>
+	
+</databaseChangeLog>

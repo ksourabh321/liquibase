@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+		
+	
+	<changeSet  author="ksourabh321"  id="create_emp_dtl_dyn_bind_var_fnc:1.0.1.0" runAlways="true">
+        <createProcedure>
+		<!--We should use CDATA tag in case we have some xml escape character-->
+		<![CDATA[
+		    CREATE OR REPLACE FUNCTION app.emp_dtl_dyn_bind_var_fnc(
+			p_emp_id bigint,
+			p_dept_id bigint
+			)
+			RETURNS TABLE(emp_id bigint, dept_id bigint, emp_name character varying, emp_role character varying) 
+			LANGUAGE 'plpgsql'
+			COST 100
+			VOLATILE PARALLEL UNSAFE
+			ROWS 1000
+
+			AS $BODY$
+			DECLARE
+			lv_stmt character varying(2000);
+			BEGIN
+			lv_stmt :='SELECT * from app.emp_vw ev where ev.emp_id=$1';
+	  
+			IF p_dept_id IS NOT NULL THEN
+			lv_stmt := lv_stmt||' and ev.dept_id=$2';
+			END IF;
+
+			RAISE INFO 'Prepared Statement: %', lv_stmt;
+	  
+			RETURN QUERY EXECUTE lv_stmt USING p_emp_id,p_dept_id;
+			END;
+			$BODY$;
+
+			ALTER FUNCTION app.emp_dtl_dyn_bind_var_fnc(bigint,bigint)
+			OWNER TO postgres;
+
+			GRANT EXECUTE ON FUNCTION app.emp_dtl_dyn_bind_var_fnc(bigint,bigint) TO PUBLIC;
+
+			GRANT EXECUTE ON FUNCTION app.emp_dtl_dyn_bind_var_fnc(bigint,bigint) TO postgres;		
+		]]>
+		</createProcedure>
+    </changeSet>
+	
+	<changeSet  author="ksourabh321"  id="create_dept_wise_emp_fnc:1.0.1.0" runOnChange="true" runAlways="true">
+        <createProcedure>
+		CREATE OR REPLACE FUNCTION app.dept_wise_emp_fnc(
+		p_dept_id bigint)
+		RETURNS TABLE(id_descr json) 
+		LANGUAGE 'plpgsql'
+		COST 100
+		VOLATILE PARALLEL UNSAFE
+		ROWS 1000
+
+		AS $BODY$
+		DECLARE
+		lv_stmt character varying(2000);
+		BEGIN
+		lv_stmt :='with emp_json as (select e.dept_id,json_agg(
+          json_build_object(''emp_id'',e.emp_id,''dept_id'',e.dept_id,''emp_name'',e.emp_name,''emp_sal'',e.emp_sal,''emp_role'',e.emp_role)) j
+          from app.emp_vw e group by e.dept_id),
+          dept_json as (
+          select json_build_object(''dept_id'',d.dept_id,''dept_name'',d.dept_name,''dept_head'',d.dept_head, ''employees'' , ej.j) jcol
+          from app.dept_vw d, emp_json ej where d.dept_id=ej.dept_id';
+	  
+		IF p_dept_id is not null then
+		      lv_stmt := lv_stmt||' and d.dept_id = $1';
+		END IF;
+	  
+		      lv_stmt := lv_stmt||') select json_build_array(json_agg(jcol)) from dept_json';
+    
+		
+		RETURN QUERY EXECUTE lv_stmt USING p_dept_id;
+		END;
+		$BODY$;
+
+		ALTER FUNCTION app.dept_wise_emp_fnc(bigint)
+		OWNER TO postgres;
+
+		GRANT EXECUTE ON FUNCTION app.dept_wise_emp_fnc(bigint) TO PUBLIC;
+
+		GRANT EXECUTE ON FUNCTION app.dept_wise_emp_fnc(bigint) TO postgres;
+	    </createProcedure>
+	</changeSet>
+	
+</databaseChangeLog>

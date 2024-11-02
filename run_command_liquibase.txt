@@ -1,0 +1,113 @@
+--Liquibase Run Command ON CLI
+
+cd C:\Users\ksour\OneDrive\Documents\postgres_liquibase\src\main\java\oprations\changelog\
+liquibase --changeLogFile=master.changelog.xml --username=postgres --password=local --url=jdbc:postgresql://localhost:5432/employee --driver=org.postgresql.Driver --classpath=C:\Users\ksour\OneDrive\Documents\postgresql-42.7.4.jar --contexts="PROD" --logLevel=info update;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from app.emp_vw;
+call app.emp_upd_proc(4,'jr. dba');
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<changeSet author="ksourabh321" id="loadUpdData-dept:1.0.1.0">
+        <loadUpdateData 
+              file="data/dept.csv"
+			  primaryKey="dept_id"
+              relativeToChangelogFile="true"
+              schemaName="public"
+              tableName="dept">
+            <column name="dept_id" type="NUMERIC"/>
+            <column name="dept_name" type="STRING"/>
+			<column name="dept_head" type="STRING"/>
+        </loadUpdateData>
+    </changeSet>
+	
+	<changeSet author="ksourabh321" id="loadUpdData-emp:1.0.1.0">
+        <loadUpdateData 
+              file="data/emp.csv"
+			  primaryKey="emp_id,dept_id"
+              relativeToChangelogFile="true"
+              schemaName="public"
+              tableName="emp">
+			<column name="emp_id" type="NUMERIC"/>
+            <column name="dept_id" type="NUMERIC"/>
+            <column name="emp_name" type="STRING"/>
+			<column name="emp_role" type="STRING"/>
+        </loadUpdateData>
+    </changeSet>
+	
+	<changeSet author="ksourabh321" id="loadData-dept:1.0.1.0">
+        <loadData 
+              file="data/dept.csv"
+              relativeToChangelogFile="true"
+              schemaName="public"
+              tableName="dept">
+            <column name="dept_id" type="NUMERIC"/>
+            <column name="dept_name" type="STRING"/>
+			<column name="dept_head" type="STRING"/>
+        </loadData>
+    </changeSet>
+	
+	<changeSet author="ksourabh321" id="loadData-emp:1.0.1.0">
+        <loadData 
+              file="data/emp.csv"
+              relativeToChangelogFile="true"
+              schemaName="public"
+              tableName="emp">
+			<column name="emp_id" type="NUMERIC"/>
+            <column name="dept_id" type="NUMERIC"/>
+            <column name="emp_name" type="STRING"/>
+			<column name="emp_role" type="STRING"/>
+        </loadData>
+    </changeSet>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+delete from databasechangelog where id in ('loadData-dept:1.0.1.0','loadData-emp:1.0.1.0')
+delete from databasechangelog where id in ('loadUpdData-dept:1.0.1.0','loadupdData-emp:1.0.1.0')

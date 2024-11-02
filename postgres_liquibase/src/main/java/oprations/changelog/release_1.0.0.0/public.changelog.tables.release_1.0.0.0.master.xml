@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+		
+		
+	<changeSet author="ksourabh321" id="create_dept_tbl:1.0.0.0">
+		<createTable tableName="dept" schemaName="public">
+			<column name="dept_id" type="bigint"/>
+			<column name="dept_name" type="varchar(100)"/>
+			<column name="dept_head" type="varchar(100)"/>
+		</createTable>
+		<sql>
+			ALTER TABLE public.dept OWNER TO postgres;
+			GRANT ALL ON TABLE public.dept TO postgres;
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

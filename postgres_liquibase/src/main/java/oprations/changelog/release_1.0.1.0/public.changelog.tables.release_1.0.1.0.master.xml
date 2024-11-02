@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro
+        http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+		
+		
+	<changeSet author="ksourabh321" id="create_emp_tbl:1.0.1.0">
+		<createTable tableName="emp" schemaName="public">
+			<column name="emp_id" type="bigint"/>
+			<column name="dept_id" type="bigint"/>
+			<column name="emp_name" type="varchar(100)"/>
+			<column name="emp_role" type="varchar(100)"/>
+		</createTable>
+		<sql>
+			ALTER TABLE public.emp OWNER TO postgres;
+			GRANT ALL ON TABLE public.emp TO postgres;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet  author="ksourabh321"  id="create_pk_dept:1.0.1.0">
+        <addPrimaryKey 
+		    columnNames="dept_id" 
+			constraintName="pk_dept" 
+			schemaName="public" 
+			tableName="dept"/>
+    </changeSet>
+	
+	<changeSet  author="ksourabh321"  id="create_pk_emp:1.0.1.0">
+        <addPrimaryKey 
+		    columnNames="emp_id" 
+			constraintName="pk_emp" 
+			schemaName="public" 
+			tableName="emp"/>		
+    </changeSet>
+	
+	<changeSet  author="ksourabh321"  id="create_fk_emp:1.0.1.0">
+        <addForeignKeyConstraint  
+		    baseColumnNames="dept_id"
+            baseTableName="emp"
+            baseTableSchemaName="public"
+            constraintName="fk_emp_dept"
+            referencedColumnNames="dept_id"
+            referencedTableName="dept"
+            referencedTableSchemaName="public"/>
+    </changeSet>
+	
+    <changeSet author="ksourabh321" id="create_idx_emp:1.0.1.0">
+        <createIndex indexName="idx_emp" schemaName="public" tableName="emp">
+            <column name="emp_name"/>
+			<column name="emp_role"/>
+        </createIndex>
+    </changeSet>
+	
+</databaseChangeLog>
+
